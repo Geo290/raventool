@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Raven CLI Prototyope Workflow
+name: Raven CLI Prototype Workflow
 
 on:
   push:
@@ -29,7 +29,7 @@ permissions:
   security-events: write # allows the workflow to upload dependency graph
 
 jobs:
-  # separete testing from building
+  # separate testing from building
   test:
     runs-on: ubuntu-latest
 
@@ -62,7 +62,7 @@ jobs:
           distribution: "temurin"
           cache: maven
       
-      - name: Get Maven Project Version # get the current proejct version from pom.xml
+      - name: Get Maven Project Version # get the current project version from pom.xml
         id: project_version
         # bash command to extract the version using maven help plugin
         run: | 
@@ -79,5 +79,5 @@ jobs:
           path: target/*.jar # path where the built JAR is located
       
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      # - name: Update dependency graph
+      #   uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
