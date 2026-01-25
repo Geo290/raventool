@@ -43,7 +43,6 @@ public class FileLoader {
             new URI(node.get("url").asString()),
             node.get("method").asString(),
             node.get("headers"),
-            node.get("authorization").asString(),
             node.get("body")
         );
     }
