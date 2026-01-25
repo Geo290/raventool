@@ -10,26 +10,70 @@ name: Raven CLI Prototyope Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'docs/**'
+      - '.vscode/**'
+      - 'LICENSE'
+
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  release:
+    types: [published]
+  workflow_dispatch:
 
-jobs:    
-  build:
-
+jobs:
+  # separete testing from building
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      - name: Run Unit Test
+        run: mvn test # maven command to executed in order to run unit tests
+
+  build-and-package:
+    # ensure tests phase is successfully completed before building
+    needs: test
+    # only build on release or manual trigger
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+   
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+      
+      - name: Get Maven Project Version # get the current proejct version from pom.xml
+        id: project_version
+        # bash command to extract the version using maven help plugin
+        run: | 
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build JAR # build the project and package the JAR
+        run: mvn -B package -DskipTests # maven command to build and skip tests
+
+      - name: Upload JAR Artifact # upload the build JAR as an artifact accessible from the workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: raven-cli-v${{steps.project_version.outputs.VERSION}}
+          path: target/*.jar # path where the built JAR is located
+      
+      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+      - name: Update dependency graph
+        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
