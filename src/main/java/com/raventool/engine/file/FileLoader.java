@@ -1,6 +1,10 @@
 package com.raventool.engine.file;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import com.raventool.model.request.RequestDetails;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.core.JacksonException;
@@ -10,14 +14,16 @@ public class FileLoader {
 
     private static ObjectMapper mapper = new ObjectMapper();
     private static JsonNode rootNode = null;
+    private static RequestDetails requestDetails = null;
 
     public static void main(String[] args) {
 
         try {
             rootNode = loadFile("C://Users/Geo29/Documents/raventool/raven/tests/test.json");
-            System.out.println(rootNode.toPrettyString());
+            requestDetails = parseRequestDetails(rootNode);
+            System.out.println(requestDetails.headers());
 
-        } catch (JacksonException | IllegalArgumentException e) {
+        } catch (JacksonException | IllegalArgumentException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -32,4 +38,13 @@ public class FileLoader {
         return mapper.readTree(file);
     }
 
+    public static RequestDetails parseRequestDetails(JsonNode node) throws URISyntaxException{
+        return new RequestDetails(
+            new URI(node.get("url").asString()),
+            node.get("method").asString(),
+            node.get("headers"),
+            node.get("authorization").asString(),
+            node.get("body")
+        );
+    }
 }
