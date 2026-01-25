@@ -24,6 +24,10 @@ on:
     types: [published]
   workflow_dispatch:
 
+permisions:
+  contents: wirte # allows the workflow to upload artifacts
+  security-events: wirte # allows the workflow to upload dependency graph
+
 jobs:
   # separete testing from building
   test:
