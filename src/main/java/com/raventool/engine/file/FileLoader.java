@@ -13,20 +13,20 @@ import tools.jackson.databind.JsonNode;
 public class FileLoader {
 
     private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode rootNode = null;
-    private static RequestDetails requestDetails = null;
+    // private static JsonNode rootNode = null;
+    // private static RequestDetails requestDetails = null;
 
-    public static void main(String[] args) {
+    // public static void main(String[] args) {
 
-        try {
-            rootNode = loadFile("C://Users/Geo29/Documents/raventool/raven/tests/test.json");
-            requestDetails = parseRequestDetails(rootNode);
-            System.out.println(requestDetails.headers());
+    //     try {
+    //         rootNode = loadFile("C://Users/Geo29/Documents/raventool/raven/tests/test.json");
+    //         requestDetails = parseRequestDetails(rootNode);
+    //         System.out.println(requestDetails.headers());
 
-        } catch (JacksonException | IllegalArgumentException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
+    //     } catch (JacksonException | IllegalArgumentException | URISyntaxException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     public static JsonNode loadFile(String path) throws IllegalArgumentException, JacksonException {
         File file = new File(path);
