@@ -1,7 +1,12 @@
 package com.raventool;
 
+import com.raventool.engine.cli.commands.Raven;
+
+import picocli.CommandLine;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        int exitCode = new CommandLine(new Raven()).execute(args);
+        System.exit(exitCode);
     }
 }
