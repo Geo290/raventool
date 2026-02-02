@@ -1,0 +1,11 @@
+{
+    "url": "https://jsonplaceholder.typicode.com/todos/1",
+    "method": "get",
+    "headers": {
+        "Content-Type": "application/json",
+        "authorization": "bearer token_value"
+    },
+    "body": {
+        "key": "token_value"
+    }
+}
