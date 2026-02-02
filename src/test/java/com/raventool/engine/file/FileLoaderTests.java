@@ -8,7 +8,7 @@ import tools.jackson.databind.JsonNode;
 
 public class FileLoaderTests {
 
-    public static String filePath = "C://Users/Geo29/Documents/raventool/raven/tests/test.json";
+    public static String filePath = "raven/tests/test.json";
     public static JsonNode root = FileLoader.loadFile(filePath);
 
     @Test
