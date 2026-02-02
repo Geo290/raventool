@@ -3,37 +3,42 @@ package com.raventool.engine.http;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.util.Map;
 
 import com.raventool.model.request.RequestDetails;
+
+import tools.jackson.databind.JsonNode;
 
 public class RequestService {
 
     private String method;
     private URI url;
-    private String headerName;
-    private String headerValue;
-    // private String authorization;
+    private JsonNode headers;
     private String body;
 
     public RequestService(RequestDetails details) {
         this.method = details.method().toUpperCase();
         this.url = details.url();
-        this.headerName = details.headers().get(0).asString(); // for now we will use only one header
-        this.headerValue = details.headers().get(1).asString();
-        // this.authorization = details.autorization(); // Aurhorization must go inside
-        // headers. So we do not need this field. Remove later
-        this.body = details.body().asString();
+        this.headers = details.headers();
+        this.body = details.body().toString();
     }
 
-    public HttpRequest buildRequest(RequestDetails details) {
+    public HttpRequest.Builder setHeaders(HttpRequest.Builder requestBuilder) {
+        if (headers != null && headers.isObject()) {
+            for (Map.Entry<String, JsonNode> entry : headers.properties()) {
+                requestBuilder.header(
+                    entry.getKey(), entry.getValue().asString()
+                );
+            }
+        }
+        return requestBuilder;
+    }
+
+    public HttpRequest buildRequest() {
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(url) // look forward to add query parameters if any
-                .headers(
-                    // headers() allow multiple entries unlike header()
-                    // so iterate through headers field will be necessary
-                    // for now just one header will be used
-                    headerName, headerValue);
+            .uri(url);
+        builder = setHeaders(builder);
 
         return switch (method) {
 
