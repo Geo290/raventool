@@ -2,6 +2,7 @@ package com.raventool.engine.cli.subcommands;
 
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 
 import com.raventool.engine.file.FileLoader;
 import com.raventool.engine.http.RequestService;
@@ -20,15 +21,25 @@ public class Run implements Runnable {
 
     @Override
     public void run() {
+        JsonNode rootNode;
+        HttpRequest request = null;
+        ClientService client;
+        RequestDetails requestDetails;
+        CompletableFuture<HttpResponse<String>> futureResponse;
+
         try {
-            JsonNode rootNode = FileLoader.loadFile(testCasePath);
-            RequestDetails requestDetails = FileLoader.parseRequestDetails(rootNode);
-            HttpRequest request = new RequestService(requestDetails).buildRequest();
-            HttpResponse<String> response = new ClientService(request).sendRequest();
-            System.out.println(response.toString());
+            rootNode = FileLoader.loadFile("raven/tests/test.json");
+            requestDetails = FileLoader.parseRequestDetails(rootNode);
+            request = new RequestService(requestDetails).buildRequest();
             
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        client = new ClientService(request);
+        futureResponse = client.sendRequest();
+
+        System.out.println(client.getBody(futureResponse).join());
+        System.out.println(client.getStatus(futureResponse).join());
     }
 }
