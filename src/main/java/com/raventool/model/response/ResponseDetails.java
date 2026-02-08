@@ -5,5 +5,5 @@ import tools.jackson.databind.JsonNode;
 public record ResponseDetails(
     int status,
     JsonNode body,
-    float time
+    long time
 ) { }
