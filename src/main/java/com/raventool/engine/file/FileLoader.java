@@ -31,4 +31,8 @@ public class FileLoader {
                 node.get("headers"),
                 node.get("body"));
     }
+
+    public static JsonNode getExpectedResults(JsonNode node) {
+        return node.get("expected");
+    }
 }
