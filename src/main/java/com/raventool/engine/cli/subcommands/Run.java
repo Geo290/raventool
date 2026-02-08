@@ -38,8 +38,5 @@ public class Run implements Runnable {
 
         client = new ClientService(request);
         futureResponse = client.sendRequest();
-
-        System.out.println(client.getBody(futureResponse).join());
-        System.out.println(client.getStatus(futureResponse).join());
     }
 }
