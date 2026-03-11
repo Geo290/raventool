@@ -10,8 +10,8 @@ import tools.jackson.databind.ObjectMapper;
 public class ResponseService {
     private ObjectMapper mapper;
 
-    public ResponseService(ObjectMapper mapper) {
-        this.mapper = mapper;
+    public ResponseService() {
+        this.mapper = new ObjectMapper();
     }
 
     public ResponseDetails parseResponseDetails(CompletableFuture<HttpResponse<String>> future, long start) {
